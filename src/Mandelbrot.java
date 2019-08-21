@@ -1,21 +1,24 @@
 import javax.swing.*;
 import java.awt.*;
+import java.awt.event.KeyEvent;
+import java.awt.event.KeyListener;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.awt.image.BufferedImage;
 
-public class Mandelbrot implements MouseListener {
+public class Mandelbrot implements MouseListener, KeyListener {
 
     private BufferedImage image, screen, temp;
     public static double aimX = -1.9;
     public static double aimY = 0.258;
     //public static double aimX = -1.8999977308451679;
     //public static double aimY = 0.253;
-    public static double zoomX = 1.12;
+    public static double zoomX = 1.1;
     public static double zoomY = 1.05;
     public static double zoomDepth = 1.00957;
 
     private static boolean pause = true;
+    private static boolean pauseX, pauseY, pauseZ;
     private static boolean zoomOut = false;
 
     public void draw(Graphics g) {
@@ -48,6 +51,7 @@ public class Mandelbrot implements MouseListener {
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         frame.setResizable(false);
         panel.addMouseListener(this);
+        frame.addKeyListener(this);
 
         panel.setPreferredSize(new Dimension(winWidth, winHeight));
         frame.add(panel);
@@ -68,8 +72,8 @@ public class Mandelbrot implements MouseListener {
     private static double stepX = lenX / winWidth;
     private static double stepY = lenY / winHeight;
 
-    private static double depth = 10;
-    private static double zoom = 0;
+    private static double depth = 30;
+    private static double zoom = -20;
 
     private static int maxColor = (int) (0xFF / depth);
 
@@ -142,17 +146,21 @@ public class Mandelbrot implements MouseListener {
     }
 
     public static void zoomDepth(double scale) {
-        if(pause) return;
+        if(pause || pauseZ) return;
         if(zoomOut) scale = 1/scale;
         zoom = (zoom + depth) * scale - depth;
     }
 
     public static void setLimits(double minX, double maxX, double minY, double maxY, double depth) {
         if(pause) return;
-        Mandelbrot.minX = minX;
-        Mandelbrot.maxX = maxX;
-        Mandelbrot.minY = minY;
-        Mandelbrot.maxY = maxY;
+        if(!pauseX) {
+            Mandelbrot.minX = minX;
+            Mandelbrot.maxX = maxX;
+        }
+        if(!pauseY) {
+            Mandelbrot.minY = minY;
+            Mandelbrot.maxY = maxY;
+        }
         lenX = maxX - minX;
         lenY = maxY - minY;
         stepX = lenX / winWidth;
@@ -168,15 +176,13 @@ public class Mandelbrot implements MouseListener {
     @Override
     public void mousePressed(MouseEvent e) {
         if(e.getButton() == MouseEvent.BUTTON1) {
-            pause = !pause;
-        } else if(e.getButton() == MouseEvent.BUTTON2) {
-            zoomOut = !zoomOut;
-        } else {
             double scaleX = e.getX() / (double) winWidth;
             double scaleY = e.getY() / (double) winHeight;
             aimX = lenX * scaleX + minX;
             aimY = lenY * scaleY + minY;
-            System.out.println("AIM (" + aimX + ", " + aimY + ")");
+            //System.out.println("AIM (" + aimX + ", " + aimY + ")");
+        } else {
+            zoomOut = !zoomOut;
         }
     }
 
@@ -192,6 +198,33 @@ public class Mandelbrot implements MouseListener {
 
     @Override
     public void mouseExited(MouseEvent e) {
+
+    }
+
+    @Override
+    public void keyTyped(KeyEvent e) {
+
+    }
+
+    @Override
+    public void keyPressed(KeyEvent e) {
+        switch(e.getKeyChar()) {
+            case 'z':
+                pauseZ = !pauseZ;
+                break;
+            case 'x':
+                pauseX = !pauseX;
+                break;
+            case 'c':
+                pauseY = !pauseY;
+                break;
+            case ' ':
+                pause = !pause;
+        }
+    }
+
+    @Override
+    public void keyReleased(KeyEvent e) {
 
     }
 }
