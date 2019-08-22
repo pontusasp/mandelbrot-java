@@ -13,7 +13,7 @@ public class Mandelbrot implements MouseListener, KeyListener {
     public static double aimY = 0.258;
     //public static double aimX = -1.8999977308451679;
     //public static double aimY = 0.253;
-    public static double zoomX = 1.1;
+    public static double zoomX = 1.05;
     public static double zoomY = 1.05;
     public static double zoomDepth = 1.00957;
 
@@ -86,11 +86,11 @@ public class Mandelbrot implements MouseListener, KeyListener {
             return;
         }
 
-        double a = 0, b = 0;
+        Im v = new Im(x, y);
+        Im u = new Im(0, 0);
         int n = 0;
-        while (a * a + b * b < 4 && n < depth + (int) zoom) {
-            a = a * a + x;
-            b = b * b + y;
+        while (u.sqlen() < 4 && n < depth + (int) zoom) {
+            u = u.mult(u).add(v);
             n++;
         }
         try {
@@ -225,6 +225,35 @@ public class Mandelbrot implements MouseListener, KeyListener {
 
     @Override
     public void keyReleased(KeyEvent e) {
+
+    }
+
+    static class Im {
+        private double r, i;
+
+        Im(double r, double i) {
+            this.r = r;
+            this.i = i;
+        }
+
+        public Im add(Im im) {
+            return new Im(r + im.r, i + im.i);
+        }
+
+        public Im subtract(Im im) {
+            return new Im(r - im.r, i - im.i);
+        }
+
+        public Im mult(Im im) {
+            double real = r * im.r - i * im.i;
+            double imaginary = r * im.i + i * im.r;
+
+            return new Im(real, imaginary);
+        }
+
+        public double sqlen() {
+            return r * r + i * i;
+        }
 
     }
 }
