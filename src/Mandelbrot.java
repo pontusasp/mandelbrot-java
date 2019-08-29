@@ -6,16 +6,34 @@ import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.awt.image.BufferedImage;
 
+/**
+ * Simple Mandelbrot zoom
+ *
+ * Controls:
+ *   space  - pause/unpause zoom
+ *   z      - pause/unpause color zoom
+ *   x      - pause/unpause x scaling
+ *   c      - pause/unpause y zoom
+ *   LMB    - Aim zoom
+ *   RMB    - Toggle reverse zoom
+ *
+ * @author Pontus Asp
+ */
 public class Mandelbrot implements MouseListener, KeyListener {
 
     private BufferedImage image, screen, temp;
-    public static double aimX = -1.9;
-    public static double aimY = 0.258;
+    //public static double aimX = -1.9;
+    public static double aimX = -1.6952474085188116;
+    //public static double aimY = 0.258;
+    public static double aimY = -4.843763163165963E-4;
     //public static double aimX = -1.8999977308451679;
     //public static double aimY = 0.253;
-    public static double zoomX = 1.05;
-    public static double zoomY = 1.05;
-    public static double zoomDepth = 1.00957;
+    //public static double zoomX = 1.05 * 5;
+    //public static double zoomY = 1.05 * 5;
+    public static double zoomX = 1.25;
+    public static double zoomY = 1.25;
+    //public static double zoomDepth = 1.00957;
+    public static double zoomDepth = 1.04785;
 
     private static boolean pause = true;
     private static boolean pauseX, pauseY, pauseZ;
@@ -180,7 +198,7 @@ public class Mandelbrot implements MouseListener, KeyListener {
             double scaleY = e.getY() / (double) winHeight;
             aimX = lenX * scaleX + minX;
             aimY = lenY * scaleY + minY;
-            //System.out.println("AIM (" + aimX + ", " + aimY + ")");
+            System.out.println("AIM (" + aimX + ", " + aimY + ")");
         } else {
             zoomOut = !zoomOut;
         }
